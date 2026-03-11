@@ -1,0 +1,29 @@
+# Java / Spring Boot
+*.class
+*.jar
+*.war
+*.ear
+/build/
+/target/
+/.gradle/
+
+# IntelliJ / VS Code
+.idea/
+*.iml
+.vscode/
+
+# Logs
+*.log
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary
+*.tmp
+*.swp

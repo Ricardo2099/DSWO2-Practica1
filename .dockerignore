@@ -1,0 +1,22 @@
+# VCS
+.git/
+.gitignore
+
+# Build outputs
+**/target/
+**/build/
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Docs/spec artifacts not needed in image
+specs/

@@ -1,0 +1,12 @@
+C:\Users\rojas\Documents\DSWO2-Practica1\backend\src\test\java\com\example\empleados\contract\SecurityNegativeContractTest.java
+C:\Users\rojas\Documents\DSWO2-Practica1\backend\src\test\java\com\example\empleados\integration\EmpleadoCreateIntegrationTest.java
+C:\Users\rojas\Documents\DSWO2-Practica1\backend\src\test\java\com\example\empleados\exception\GlobalExceptionHandlerTest.java
+C:\Users\rojas\Documents\DSWO2-Practica1\backend\src\test\java\com\example\empleados\integration\EmpleadoQueryIntegrationTest.java
+C:\Users\rojas\Documents\DSWO2-Practica1\backend\src\test\java\com\example\empleados\contract\EmpleadoCreateContractTest.java
+C:\Users\rojas\Documents\DSWO2-Practica1\backend\src\test\java\com\example\empleados\service\ClaveEmpleadoGeneratorTest.java
+C:\Users\rojas\Documents\DSWO2-Practica1\backend\src\test\java\com\example\empleados\integration\EmpleadoUpdateDeleteIntegrationTest.java
+C:\Users\rojas\Documents\DSWO2-Practica1\backend\src\test\java\com\example\empleados\contract\EmpleadoPerformanceContractTest.java
+C:\Users\rojas\Documents\DSWO2-Practica1\backend\src\test\java\com\example\empleados\contract\EmpleadoQueryContractTest.java
+C:\Users\rojas\Documents\DSWO2-Practica1\backend\src\test\java\com\example\empleados\contract\EmpleadoUpdateDeleteContractTest.java
+C:\Users\rojas\Documents\DSWO2-Practica1\backend\src\test\java\com\example\empleados\integration\IntegrationTestBase.java
+C:\Users\rojas\Documents\DSWO2-Practica1\backend\src\test\java\com\example\empleados\service\EmpleadoServiceTest.java

@@ -1,0 +1,199 @@
+openapi: 3.0.3
+info:
+  title: API de Empleados
+  version: 1.0.0
+  description: Contrato CRUD de empleados
+servers:
+  - url: http://localhost:8080
+security:
+  - basicAuth: []
+paths:
+  /api/v1/empleados:
+    post:
+      summary: Crear empleado
+      operationId: crearEmpleado
+      tags: [Empleados]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmpleadoCreateRequest'
+      responses:
+        '201':
+          description: Empleado creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmpleadoResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '409':
+          description: Clave duplicada
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+    get:
+      summary: Listar empleados
+      operationId: listarEmpleados
+      tags: [Empleados]
+      responses:
+        '200':
+          description: Lista de empleados
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EmpleadoResponse'
+
+  /api/v1/empleados/{clave}:
+    parameters:
+      - in: path
+        name: clave
+        required: true
+        schema:
+          type: string
+          pattern: '^EMP-[0-9]+$'
+          maxLength: 50
+    get:
+      summary: Obtener empleado por clave
+      operationId: obtenerEmpleado
+      tags: [Empleados]
+      responses:
+        '200':
+          description: Empleado encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmpleadoResponse'
+        '404':
+          description: Empleado no encontrado
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+    put:
+      summary: Actualizar empleado
+      operationId: actualizarEmpleado
+      tags: [Empleados]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmpleadoUpdateRequest'
+      responses:
+        '200':
+          description: Empleado actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmpleadoResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '404':
+          description: Empleado no encontrado
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+    delete:
+      summary: Eliminar empleado
+      operationId: eliminarEmpleado
+      tags: [Empleados]
+      responses:
+        '204':
+          description: Empleado eliminado
+        '404':
+          description: Empleado no encontrado
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+
+  schemas:
+    EmpleadoCreateRequest:
+      type: object
+      required: [nombre, direccion, telefono]
+      properties:
+        nombre:
+          type: string
+          maxLength: 100
+          example: Ana Pérez
+        direccion:
+          type: string
+          maxLength: 100
+          example: Av. Principal 123
+        telefono:
+          type: string
+          maxLength: 100
+          example: +52-555-123-4567
+
+    EmpleadoUpdateRequest:
+      type: object
+      required: [nombre, direccion, telefono]
+      properties:
+        nombre:
+          type: string
+          maxLength: 100
+        direccion:
+          type: string
+          maxLength: 100
+        telefono:
+          type: string
+          maxLength: 100
+
+    EmpleadoResponse:
+      type: object
+      required: [clave, nombre, direccion, telefono]
+      properties:
+        clave:
+          type: string
+          pattern: '^EMP-[0-9]+$'
+          maxLength: 50
+          example: EMP-1
+        nombre:
+          type: string
+          maxLength: 100
+        direccion:
+          type: string
+          maxLength: 100
+        telefono:
+          type: string
+          maxLength: 100
+
+    ProblemDetails:
+      type: object
+      required: [type, title, status, detail]
+      properties:
+        type:
+          type: string
+          example: https://api.example.com/errors/validation
+        title:
+          type: string
+          example: Validation failed
+        status:
+          type: integer
+          example: 400
+        detail:
+          type: string
+          example: El campo nombre excede 100 caracteres
+        instance:
+          type: string
+          example: /api/v1/empleados
