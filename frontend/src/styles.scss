@@ -1,0 +1,98 @@
+@use '@angular/material' as mat;
+
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Source+Sans+3:wght@400;500;600&display=swap');
+
+:root {
+	--ui-bg: #f2f5f9;
+	--ui-surface: #ffffff;
+	--ui-surface-soft: #f8fafc;
+	--ui-text: #142338;
+	--ui-muted: #5a6b80;
+	--ui-primary: #1f5fa8;
+	--ui-primary-strong: #174d8c;
+	--ui-border: #d7e1ee;
+	--ui-shadow: 0 10px 30px rgba(20, 35, 56, 0.08);
+	--ui-radius-lg: 16px;
+	--ui-radius-md: 12px;
+	--ui-radius-sm: 10px;
+}
+
+html {
+	@include mat.theme(
+		(
+			color: mat.$azure-palette,
+			typography: 'Source Sans 3',
+			density: 0
+		)
+	);
+}
+
+body {
+	margin: 0;
+	font-family: 'Source Sans 3', 'Segoe UI', sans-serif;
+	color: var(--ui-text);
+	background: var(--ui-bg);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-family: 'Manrope', 'Segoe UI', sans-serif;
+	letter-spacing: -0.01em;
+}
+
+.mat-mdc-card,
+.mat-elevation-z1 {
+	border-radius: var(--ui-radius-lg);
+	box-shadow: var(--ui-shadow) !important;
+	border: 1px solid var(--ui-border);
+	background: var(--ui-surface);
+}
+
+.mat-mdc-form-field {
+	--mdc-outlined-text-field-container-shape: 12px;
+	--mdc-outlined-text-field-outline-color: var(--ui-border);
+	--mdc-outlined-text-field-focus-outline-color: var(--ui-primary);
+	--mdc-outlined-text-field-hover-outline-color: #a8bdd8;
+	--mdc-outlined-text-field-label-text-color: var(--ui-muted);
+}
+
+.mat-mdc-form-field .mdc-text-field {
+	background: var(--ui-surface-soft);
+	transition: background-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.mat-mdc-form-field .mdc-text-field:hover {
+	background: #f3f7fc;
+}
+
+.mat-mdc-form-field.mat-focused .mdc-text-field {
+	box-shadow: 0 0 0 3px rgba(31, 95, 168, 0.14);
+}
+
+.mat-mdc-raised-button,
+.mat-mdc-unelevated-button,
+.mat-mdc-outlined-button,
+.mat-mdc-button,
+.mat-mdc-icon-button {
+	transition: transform 0.22s ease, box-shadow 0.22s ease, background-color 0.22s ease, color 0.22s ease;
+}
+
+.mat-mdc-raised-button:hover,
+.mat-mdc-unelevated-button:hover,
+.mat-mdc-outlined-button:hover,
+.mat-mdc-icon-button:hover {
+	transform: translateY(-1px);
+}
+
+.mat-mdc-raised-button:focus-visible,
+.mat-mdc-unelevated-button:focus-visible,
+.mat-mdc-outlined-button:focus-visible,
+.mat-mdc-button:focus-visible,
+.mat-mdc-icon-button:focus-visible {
+	outline: none;
+	box-shadow: 0 0 0 3px rgba(31, 95, 168, 0.2);
+}

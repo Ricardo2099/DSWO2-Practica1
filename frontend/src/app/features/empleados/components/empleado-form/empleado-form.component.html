@@ -1,0 +1,41 @@
+<form class="empleado-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+  <mat-form-field appearance="outline">
+    <mat-label>Nombre</mat-label>
+    <input matInput formControlName="nombre" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Direccion</mat-label>
+    <input matInput formControlName="direccion" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Telefono</mat-label>
+    <input matInput formControlName="telefono" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Correo</mat-label>
+    <input matInput formControlName="correo" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" *ngIf="departamentos.length > 0; else manualDepartamento">
+    <mat-label>Departamento</mat-label>
+    <mat-select formControlName="departamentoClave">
+      <mat-option *ngFor="let d of departamentos" [value]="d.clave">{{ d.clave }} - {{ d.nombre }}</mat-option>
+    </mat-select>
+    <mat-hint>Seleccione una clave de departamento existente.</mat-hint>
+  </mat-form-field>
+
+  <ng-template #manualDepartamento>
+    <mat-form-field appearance="outline">
+      <mat-label>Departamento</mat-label>
+      <input matInput formControlName="departamentoClave" placeholder="Ej. IT" />
+      <mat-hint>No hay departamentos cargados. Ingrese la clave y el backend validara la relacion.</mat-hint>
+    </mat-form-field>
+  </ng-template>
+
+  <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid || isLoadingDepartamentos">
+    Crear empleado
+  </button>
+</form>

@@ -1,8 +1,10 @@
 package com.example.empleados.service;
 
 import com.example.empleados.domain.Empleado;
+import com.example.empleados.domain.Departamento;
 import com.example.empleados.dto.EmpleadoCreateRequest;
 import com.example.empleados.dto.EmpleadoUpdateRequest;
+import com.example.empleados.repository.DepartamentoRepository;
 import com.example.empleados.exception.EmpleadoNotFoundException;
 import com.example.empleados.repository.EmpleadoRepository;
 import org.junit.jupiter.api.Test;
@@ -29,6 +31,9 @@ class EmpleadoServiceTest {
     private EmpleadoRepository empleadoRepository;
 
     @Mock
+    private DepartamentoRepository departamentoRepository;
+
+    @Mock
     private ClaveEmpleadoGenerator claveEmpleadoGenerator;
 
     @InjectMocks
@@ -36,8 +41,12 @@ class EmpleadoServiceTest {
 
     @Test
     void crearDebeAsignarClaveYGuardar() {
-        EmpleadoCreateRequest req = new EmpleadoCreateRequest("Ana", "Dir", "123");
+        EmpleadoCreateRequest req = new EmpleadoCreateRequest("Ana", "Dir", "123", "ana@empleados.local", "IT");
+        Departamento departamento = new Departamento();
+        departamento.setClave("IT");
+
         when(claveEmpleadoGenerator.generar()).thenReturn("EMP-1");
+        when(departamentoRepository.findById("IT")).thenReturn(Optional.of(departamento));
         when(empleadoRepository.save(any(Empleado.class))).thenAnswer(i -> i.getArgument(0));
 
         Empleado creado = empleadoService.crear(req);
@@ -65,10 +74,14 @@ class EmpleadoServiceTest {
         Empleado existente = new Empleado();
         existente.setClave("EMP-2");
         existente.setNombre("Old");
+        Departamento departamento = new Departamento();
+        departamento.setClave("IT");
+
         when(empleadoRepository.findById("EMP-2")).thenReturn(Optional.of(existente));
+        when(departamentoRepository.findById("IT")).thenReturn(Optional.of(departamento));
         when(empleadoRepository.save(any(Empleado.class))).thenAnswer(i -> i.getArgument(0));
 
-        Empleado actualizado = empleadoService.actualizar("EMP-2", new EmpleadoUpdateRequest("New", "Dir2", "999"));
+        Empleado actualizado = empleadoService.actualizar("EMP-2", new EmpleadoUpdateRequest("New", "Dir2", "999", "IT"));
 
         assertThat(actualizado.getClave()).isEqualTo("EMP-2");
         assertThat(actualizado.getNombre()).isEqualTo("New");

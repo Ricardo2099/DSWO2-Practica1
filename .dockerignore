@@ -1,10 +1,14 @@
 # VCS
 .git/
 .gitignore
+Dockerfile*
+.dockerignore
 
 # Build outputs
 **/target/
 **/build/
+**/dist/
+**/node_modules/
 
 # IDE
 .vscode/
@@ -12,6 +16,7 @@
 
 # Logs
 *.log
+coverage/
 
 # Environment
 .env

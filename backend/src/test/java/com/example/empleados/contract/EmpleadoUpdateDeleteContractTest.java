@@ -1,6 +1,6 @@
 package com.example.empleados.contract;
 
-import com.example.empleados.config.SecurityConfig;
+import com.example.empleados.config.BearerTokenFilter;
 import com.example.empleados.controller.EmpleadoController;
 import com.example.empleados.domain.Empleado;
 import com.example.empleados.exception.GlobalExceptionHandler;
@@ -9,20 +9,21 @@ import com.example.empleados.service.EmpleadoService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = EmpleadoController.class)
-@Import({SecurityConfig.class, GlobalExceptionHandler.class, EmpleadoMapper.class})
+@AutoConfigureMockMvc(addFilters = false)
+@Import({GlobalExceptionHandler.class, EmpleadoMapper.class})
 class EmpleadoUpdateDeleteContractTest {
 
     @Autowired
@@ -31,6 +32,9 @@ class EmpleadoUpdateDeleteContractTest {
     @MockBean
     private EmpleadoService empleadoService;
 
+    @MockBean
+    private BearerTokenFilter bearerTokenFilter;
+
     @Test
     void debeActualizarSinCambiarClave() throws Exception {
         Empleado empleado = new Empleado();
@@ -38,17 +42,18 @@ class EmpleadoUpdateDeleteContractTest {
         empleado.setNombre("Luis");
         empleado.setDireccion("Nueva");
         empleado.setTelefono("777");
+        empleado.setCorreo("luis@empleados.local");
 
         Mockito.when(empleadoService.actualizar(Mockito.eq("EMP-3"), Mockito.any())).thenReturn(empleado);
 
         mockMvc.perform(put("/api/v1/empleados/EMP-3")
-                        .with(httpBasic("admin", "admin123"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
                                   "nombre": "Luis",
                                   "direccion": "Nueva",
-                                  "telefono": "777"
+                                  "telefono": "777",
+                                  "departamentoClave": "IT"
                                 }
                                 """))
                 .andExpect(status().isOk())
@@ -57,7 +62,7 @@ class EmpleadoUpdateDeleteContractTest {
 
     @Test
     void debeEliminarEmpleado() throws Exception {
-        mockMvc.perform(delete("/api/v1/empleados/EMP-3").with(httpBasic("admin", "admin123")))
+        mockMvc.perform(delete("/api/v1/empleados/EMP-3"))
                 .andExpect(status().isNoContent());
     }
 }

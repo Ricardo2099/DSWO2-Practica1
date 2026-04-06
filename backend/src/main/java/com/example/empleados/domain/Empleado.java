@@ -2,7 +2,10 @@ package com.example.empleados.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -25,6 +28,19 @@ public class Empleado {
 
     @Column(nullable = false, length = 100)
     private String telefono;
+
+    @Column(nullable = false, unique = true, length = 255)
+    private String correo;
+
+    @Column(nullable = false)
+    private boolean habilitado;
+
+    @Column(nullable = false, length = 20)
+    private String rol;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "departamento_clave")
+    private Departamento departamento;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
@@ -68,6 +84,38 @@ public class Empleado {
         return createdAt;
     }
 
+    public String getCorreo() {
+        return correo;
+    }
+
+    public void setCorreo(String correo) {
+        this.correo = correo;
+    }
+
+    public boolean isHabilitado() {
+        return habilitado;
+    }
+
+    public void setHabilitado(boolean habilitado) {
+        this.habilitado = habilitado;
+    }
+
+    public String getRol() {
+        return rol;
+    }
+
+    public void setRol(String rol) {
+        this.rol = rol;
+    }
+
+    public Departamento getDepartamento() {
+        return departamento;
+    }
+
+    public void setDepartamento(Departamento departamento) {
+        this.departamento = departamento;
+    }
+
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
@@ -77,6 +125,9 @@ public class Empleado {
         LocalDateTime now = LocalDateTime.now();
         this.createdAt = now;
         this.updatedAt = now;
+        if (this.rol == null || this.rol.isBlank()) {
+            this.rol = "USER";
+        }
     }
 
     @PreUpdate

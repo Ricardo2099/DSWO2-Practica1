@@ -48,9 +48,9 @@ description: "Task list template for feature implementation"
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Create project structure per implementation plan
-- [ ] T002 Initialize [language] project with [framework] dependencies
-- [ ] T003 [P] Configure linting and formatting tools
+- [ ] T001 Create repository structure per implementation plan (`/frontend` independent from `/backend`)
+- [ ] T002 Initialize Angular project in `frontend/` with required dependencies
+- [ ] T003 [P] Configure linting, formatting, and test scripts for frontend/backend parity
 
 ---
 
@@ -62,12 +62,12 @@ description: "Task list template for feature implementation"
 
 Examples of foundational tasks (adjust based on your project):
 
-- [ ] T004 Setup database schema and migrations framework
-- [ ] T005 [P] Implement authentication/authorization framework
-- [ ] T006 [P] Setup API routing and middleware structure
-- [ ] T007 Create base models/entities that all stories depend on
-- [ ] T008 Configure error handling and logging infrastructure
-- [ ] T009 Setup environment configuration management
+- [ ] T004 Configure frontend `core` module structure (interceptors, guards, global services)
+- [ ] T005 [P] Implement login flow (`POST /auth/login`) with token + role persistence
+- [ ] T006 [P] Implement HTTP interceptor for Bearer token and centralized HTTP error handling
+- [ ] T007 Implement `AuthGuard` and protected routes (`/empleados`, `/departamentos`)
+- [ ] T008 Implement role-based UI authorization rules (`ADMIN` CRUD, `USER` read-only)
+- [ ] T009 Setup environment/base URL configuration for backend API (`http://localhost:8080`)
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -88,12 +88,12 @@ Examples of foundational tasks (adjust based on your project):
 
 ### Implementation for User Story 1
 
-- [ ] T012 [P] [US1] Create [Entity1] model in src/models/[entity1].py
-- [ ] T013 [P] [US1] Create [Entity2] model in src/models/[entity2].py
-- [ ] T014 [US1] Implement [Service] in src/services/[service].py (depends on T012, T013)
-- [ ] T015 [US1] Implement [endpoint/feature] in src/[location]/[file].py
-- [ ] T016 [US1] Add validation and error handling
-- [ ] T017 [US1] Add logging for user story 1 operations
+- [ ] T012 [P] [US1] Create feature models/interfaces in `frontend/src/app/features/[feature]/models/`
+- [ ] T013 [P] [US1] Create reactive form and Material table components
+- [ ] T014 [US1] Implement feature service in `frontend/src/app/features/[feature]/services/`
+- [ ] T015 [US1] Implement route/page workflow in `frontend/src/app/features/[feature]/pages/`
+- [ ] T016 [US1] Add validation and centralized snackbar feedback
+- [ ] T017 [US1] Add role-aware action visibility for user story operations
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently
 
@@ -179,9 +179,9 @@ Examples of foundational tasks (adjust based on your project):
 ### Within Each User Story
 
 - Tests (if included) MUST be written and FAIL before implementation
-- Models before services
-- Services before endpoints
-- Core implementation before integration
+- Models/interfaces before services
+- Services before page/component integration
+- Core auth/guard/interceptor behavior before feature integration
 - Story complete before moving to next priority
 
 ### Parallel Opportunities
@@ -246,6 +246,7 @@ With multiple developers:
 - [Story] label maps task to specific user story for traceability
 - Each user story should be independently completable and testable
 - Verify tests fail before implementing
+- Keep feature-based Angular structure (`core`, `features`, `shared`) when frontend exists
 - Commit after each task or logical group
 - Stop at any checkpoint to validate story independently
 - Avoid: vague tasks, same file conflicts, cross-story dependencies that break independence

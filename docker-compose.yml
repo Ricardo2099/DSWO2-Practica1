@@ -28,10 +28,21 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-empleados_db}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-empleados_user}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-empleados_pass}
-      APP_SECURITY_BASIC_USERNAME: ${APP_SECURITY_BASIC_USERNAME:-admin}
-      APP_SECURITY_BASIC_PASSWORD: ${APP_SECURITY_BASIC_PASSWORD:-admin123}
+      APP_AUTH_SESSION_TIMEOUT_MINUTES: ${APP_AUTH_SESSION_TIMEOUT_MINUTES:-30}
+      APP_AUTH_MAX_FAILED_ATTEMPTS: ${APP_AUTH_MAX_FAILED_ATTEMPTS:-10}
+      APP_AUTH_LOCK_DURATION_MINUTES: ${APP_AUTH_LOCK_DURATION_MINUTES:-15}
     ports:
       - "8080:8080"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: empleados-frontend
+    depends_on:
+      - api
+    ports:
+      - "4200:80"
 
 volumes:
   postgres_data:

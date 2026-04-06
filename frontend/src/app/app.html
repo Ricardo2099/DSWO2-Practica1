@@ -1,0 +1,16 @@
+<div class="app-shell">
+	<mat-toolbar class="app-toolbar" *ngIf="isAuthenticated">
+		<span class="brand">Gestor de Personal</span>
+
+		<nav class="nav-links" aria-label="Navegacion principal">
+			<a mat-button routerLink="/empleados" routerLinkActive="active-link">Empleados</a>
+			<a mat-button *ngIf="isAdmin" routerLink="/departamentos" routerLinkActive="active-link">Departamentos</a>
+		</nav>
+
+		<button mat-stroked-button type="button" (click)="logout()">Cerrar sesion</button>
+	</mat-toolbar>
+
+	<main class="app-content">
+		<router-outlet></router-outlet>
+	</main>
+</div>

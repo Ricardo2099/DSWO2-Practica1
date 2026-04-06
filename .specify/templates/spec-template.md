@@ -95,6 +95,14 @@
 - **FR-006**: System MUST authenticate users via [NEEDS CLARIFICATION: auth method not specified - email/password, SSO, OAuth?]
 - **FR-007**: System MUST retain user data for [NEEDS CLARIFICATION: retention period not specified]
 
+### Security & Authorization Requirements *(mandatory for authenticated flows)*
+
+- Define authentication entrypoint(s) and token lifecycle (store, attach, refresh/expire, clear).
+- Define role matrix explicitly (at minimum `ADMIN` and `USER` when applicable).
+- Specify protected routes and redirect behavior for unauthenticated access.
+- Specify UI authorization behavior (hide/disable forbidden actions) and clarify that backend is the final authority.
+- Include negative scenarios for no token, invalid token, and insufficient role.
+
 ### Key Entities *(include if feature involves data)*
 
 - **[Entity 1]**: [What it represents, key attributes without implementation]

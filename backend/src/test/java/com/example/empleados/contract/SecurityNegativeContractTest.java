@@ -1,30 +1,61 @@
 package com.example.empleados.contract;
 
-import com.example.empleados.config.SecurityConfig;
-import com.example.empleados.controller.EmpleadoController;
-import com.example.empleados.exception.GlobalExceptionHandler;
-import com.example.empleados.mapper.EmpleadoMapper;
-import com.example.empleados.service.EmpleadoService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = EmpleadoController.class)
-@Import({SecurityConfig.class, GlobalExceptionHandler.class, EmpleadoMapper.class})
+@SpringBootTest
+@AutoConfigureMockMvc
+@Testcontainers(disabledWithoutDocker = true)
 class SecurityNegativeContractTest {
+
+    @Container
+    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15")
+            .withDatabaseName("empleados_db")
+            .withUsername("empleados_user")
+            .withPassword("empleados_pass");
+
+    @DynamicPropertySource
+    static void configure(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+        registry.add("spring.datasource.username", postgres::getUsername);
+        registry.add("spring.datasource.password", postgres::getPassword);
+    }
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
-    private EmpleadoService empleadoService;
+    private String token;
+
+    @BeforeEach
+    void login() throws Exception {
+        String response = mockMvc.perform(post("/auth/login")
+                        .contentType("application/json")
+                        .content("""
+                                {
+                                  "correo": "admin@empleados.local",
+                                  "contrasena": "password"
+                                }
+                                """))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        int start = response.indexOf("\"token\":\"") + 9;
+        int end = response.indexOf('"', start);
+        token = response.substring(start, end);
+    }
 
     @Test
     void debeRetornar401SinCredenciales() throws Exception {
@@ -33,8 +64,29 @@ class SecurityNegativeContractTest {
     }
 
     @Test
-    void debeRetornar401ConCredencialesInvalidas() throws Exception {
-        mockMvc.perform(get("/api/v1/empleados").with(httpBasic("bad", "bad")))
+    void debeRetornar401ConTokenInvalido() throws Exception {
+        mockMvc.perform(get("/api/v1/empleados").header("Authorization", "Bearer bad-token"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void departamentosDebeRetornar401SinCredenciales() throws Exception {
+        mockMvc.perform(get("/api/v1/departamentos"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void departamentosDebeRetornar401ConTokenInvalido() throws Exception {
+        mockMvc.perform(get("/api/v1/departamentos").header("Authorization", "Bearer bad-token"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void debeRetornar401CuandoTokenFueCerrado() throws Exception {
+        mockMvc.perform(post("/auth/logout").header("Authorization", "Bearer " + token))
+                .andExpect(status().isNoContent());
+
+        mockMvc.perform(get("/api/v1/empleados").header("Authorization", "Bearer " + token))
                 .andExpect(status().isUnauthorized());
     }
 }

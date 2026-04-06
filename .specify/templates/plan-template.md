@@ -31,7 +31,13 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+- [ ] Frontend scope is explicitly isolated in `/frontend` and backend scope in `/backend`.
+- [ ] Proposed frontend structure enforces `src/app/core`, `src/app/features/{auth,empleados,departamentos}`, and `src/app/shared`.
+- [ ] Authentication flow uses `POST /auth/login`, Bearer token injection by interceptor, and session redirection to `/login`.
+- [ ] Authorization matrix is specified for `ADMIN` (CRUD) and `USER` (read-only) with UI adaptation rules.
+- [ ] API integration targets `http://localhost:8080` through a single base URL configuration strategy.
+- [ ] Data model and UX flows preserve "empleado pertenece a departamento" constraints.
+- [ ] Test strategy includes backend contract/integration coverage and frontend unit coverage for changed guards/interceptors/services.
 
 ## Project Structure
 
@@ -78,10 +84,16 @@ backend/
 
 frontend/
 ├── src/
-│   ├── components/
-│   ├── pages/
-│   └── services/
-└── tests/
+│   └── app/
+│       ├── core/
+│       ├── features/
+│       │   ├── auth/
+│       │   ├── empleados/
+│       │   └── departamentos/
+│       └── shared/
+├── public/
+├── angular.json
+└── package.json
 
 # [REMOVE IF UNUSED] Option 3: Mobile + API (when "iOS/Android" detected)
 api/

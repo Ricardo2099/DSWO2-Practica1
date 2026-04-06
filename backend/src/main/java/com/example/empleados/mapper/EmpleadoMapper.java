@@ -12,7 +12,9 @@ public class EmpleadoMapper {
                 empleado.getClave(),
                 empleado.getNombre(),
                 empleado.getDireccion(),
-                empleado.getTelefono()
+                empleado.getTelefono(),
+                empleado.getCorreo(),
+                empleado.getDepartamento() != null ? empleado.getDepartamento().getClave() : null
         );
     }
 }

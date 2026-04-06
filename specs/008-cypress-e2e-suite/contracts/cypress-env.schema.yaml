@@ -1,0 +1,33 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+title: Cypress Environment Contract
+type: object
+description: Variables de entorno requeridas para ejecutar la suite E2E contra backend real.
+required:
+  - CYPRESS_API_URL
+  - CYPRESS_ADMIN_EMAIL
+  - CYPRESS_ADMIN_PASSWORD
+  - CYPRESS_USER_EMAIL
+  - CYPRESS_USER_PASSWORD
+properties:
+  CYPRESS_API_URL:
+    type: string
+    format: uri
+    examples:
+      - http://localhost:8080
+  CYPRESS_ADMIN_EMAIL:
+    type: string
+    format: email
+  CYPRESS_ADMIN_PASSWORD:
+    type: string
+    minLength: 1
+  CYPRESS_USER_EMAIL:
+    type: string
+    format: email
+  CYPRESS_USER_PASSWORD:
+    type: string
+    minLength: 1
+  CYPRESS_BASE_URL:
+    type: string
+    format: uri
+    default: http://localhost:4200
+additionalProperties: true

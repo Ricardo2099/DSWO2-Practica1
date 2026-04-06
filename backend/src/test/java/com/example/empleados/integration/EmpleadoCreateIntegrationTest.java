@@ -1,5 +1,7 @@
 package com.example.empleados.integration;
 
+import com.example.empleados.domain.Departamento;
+import com.example.empleados.repository.DepartamentoRepository;
 import com.example.empleados.repository.EmpleadoRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,13 +11,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 class EmpleadoCreateIntegrationTest extends IntegrationTestBase {
 
     @Autowired
@@ -24,21 +25,31 @@ class EmpleadoCreateIntegrationTest extends IntegrationTestBase {
     @Autowired
     private EmpleadoRepository empleadoRepository;
 
+    @Autowired
+    private DepartamentoRepository departamentoRepository;
+
     @BeforeEach
     void clean() {
         empleadoRepository.deleteAll();
+        departamentoRepository.deleteAll();
+
+        Departamento departamento = new Departamento();
+        departamento.setClave("IT");
+        departamento.setNombre("Tecnologia");
+        departamentoRepository.save(departamento);
     }
 
     @Test
     void debeCrearEmpleadoEnPostgres() throws Exception {
         mockMvc.perform(post("/api/v1/empleados")
-                        .with(httpBasic("admin", "admin123"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
                                   "nombre": "Maria",
                                   "direccion": "Calle 10",
-                                  "telefono": "300000"
+                                                                    "telefono": "300000",
+                                                                    "correo": "maria@empleados.local",
+                                                                    "departamentoClave": "IT"
                                 }
                                 """))
                 .andExpect(status().isCreated())
