@@ -26,8 +26,10 @@ mvn spring-boot:run
 - Swagger UI: `http://localhost:8080/swagger-ui`
 - OpenAPI JSON: `http://localhost:8080/v3/api-docs`
 
-## 5) Probar autenticación básica
-Usar encabezado `Authorization: Basic ...` en cada endpoint.
+## 5) Probar autenticación por token
+1. Ejecutar `POST /auth/login` con credenciales válidas.
+2. Copiar el `token` de la respuesta.
+3. Usar encabezado `Authorization: Bearer <token>` en cada endpoint protegido.
 
 ## 6) Flujo mínimo de validación
 1. `POST /api/v1/empleados` con `nombre`, `direccion`, `telefono` válidos (la `clave` la genera el sistema).

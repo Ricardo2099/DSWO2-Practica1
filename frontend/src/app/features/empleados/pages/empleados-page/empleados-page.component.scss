@@ -1,0 +1,53 @@
+.empleados-page {
+  display: grid;
+  gap: 1rem;
+  padding: 1.05rem;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: #113357;
+}
+
+header p {
+  margin: 0.4rem 0 0;
+  color: var(--ui-muted);
+  font-weight: 500;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  padding: 0.65rem;
+  border-radius: var(--ui-radius-lg);
+  background: var(--ui-surface);
+  border: 1px solid var(--ui-border);
+  box-shadow: var(--ui-shadow);
+}
+
+table {
+  width: 100%;
+}
+
+th.mat-mdc-header-cell {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  color: #274566;
+}
+
+td.mat-mdc-cell {
+  color: #1d324d;
+}
+
+.empty-state {
+  margin: 1rem 0;
+  color: var(--ui-muted);
+  font-weight: 600;
+}
+
+.loading-state {
+  min-height: 10rem;
+  display: grid;
+  place-items: center;
+}

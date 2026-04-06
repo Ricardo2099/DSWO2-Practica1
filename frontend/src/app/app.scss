@@ -1,0 +1,46 @@
+.app-shell {
+	min-height: 100dvh;
+	display: grid;
+	grid-template-rows: auto 1fr;
+	background:
+		radial-gradient(circle at 10% -5%, rgba(31, 95, 168, 0.12), transparent 35%),
+		radial-gradient(circle at 85% -10%, rgba(22, 150, 118, 0.12), transparent 38%),
+		var(--ui-bg);
+}
+
+.app-toolbar {
+	gap: 1rem;
+	background: #163a63;
+	color: #edf4fb;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.brand {
+	font-family: 'Manrope', sans-serif;
+	font-weight: 800;
+	letter-spacing: 0.02em;
+}
+
+.nav-links {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	margin-left: 1rem;
+}
+
+.nav-links a {
+	color: #cfe0f2;
+	border-radius: var(--ui-radius-sm);
+}
+
+.nav-links a.active-link {
+	color: #ffffff;
+	background: rgba(255, 255, 255, 0.2);
+}
+
+.app-content {
+	width: min(1200px, 100%);
+	margin: 0 auto;
+	padding: 1.15rem;
+	box-sizing: border-box;
+}

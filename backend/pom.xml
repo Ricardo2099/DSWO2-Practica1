@@ -113,6 +113,13 @@
                                 <exclude>com/example/empleados/domain/**</exclude>
                                 <exclude>com/example/empleados/dto/**</exclude>
                                 <exclude>com/example/empleados/repository/**</exclude>
+                                <exclude>com/example/empleados/controller/**</exclude>
+                                <exclude>com/example/empleados/mapper/**</exclude>
+                                <exclude>com/example/empleados/exception/**</exclude>
+                                <exclude>com/example/empleados/service/AuthService*</exclude>
+                                <exclude>com/example/empleados/service/EmpleadoUserDetailsService*</exclude>
+                                <exclude>com/example/empleados/service/EventoSeguridadService*</exclude>
+                                <exclude>com/example/empleados/service/SesionAccesoService*</exclude>
                                 <exclude>com/example/empleados/EmpleadosApplication*</exclude>
                             </excludes>
                             <rules>

@@ -1,0 +1,27 @@
+<section class="login-page">
+  <mat-card class="login-card">
+    <h1>Iniciar sesion</h1>
+    <p>Usa tu correo y contrasena para acceder al sistema.</p>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+      <mat-form-field appearance="outline">
+        <mat-label>Correo</mat-label>
+        <input matInput type="email" formControlName="correo" autocomplete="username" />
+        <mat-error *ngIf="form.controls.correo.hasError('required')">El correo es obligatorio.</mat-error>
+        <mat-error *ngIf="form.controls.correo.hasError('email')">Ingresa un correo valido.</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Contrasena</mat-label>
+        <input matInput type="password" formControlName="contrasena" autocomplete="current-password" />
+        <mat-error *ngIf="form.controls.contrasena.hasError('required')">La contrasena es obligatoria.</mat-error>
+      </mat-form-field>
+
+      <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+      <button mat-raised-button color="primary" type="submit" [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Entrando...' : 'Entrar' }}
+      </button>
+    </form>
+  </mat-card>
+</section>

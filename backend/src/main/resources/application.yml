@@ -34,7 +34,7 @@ logging:
     console: '{"timestamp":"%d{yyyy-MM-dd''T''HH:mm:ss.SSSXXX}","level":"%p","logger":"%c{1}","thread":"%t","message":"%m"}%n'
 
 app:
-  security:
-    basic:
-      username: ${APP_SECURITY_BASIC_USERNAME:admin}
-      password: ${APP_SECURITY_BASIC_PASSWORD:admin123}
+  auth:
+    session-timeout-minutes: ${APP_AUTH_SESSION_TIMEOUT_MINUTES:30}
+    max-failed-attempts: ${APP_AUTH_MAX_FAILED_ATTEMPTS:10}
+    lock-duration-minutes: ${APP_AUTH_LOCK_DURATION_MINUTES:15}

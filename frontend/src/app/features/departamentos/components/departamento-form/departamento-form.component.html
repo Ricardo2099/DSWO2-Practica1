@@ -1,0 +1,25 @@
+<form class="departamento-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+  <mat-form-field appearance="outline">
+    <mat-label>Clave</mat-label>
+    <input matInput formControlName="clave" />
+    <mat-error *ngIf="form.controls.clave.hasError('required')">La clave es obligatoria.</mat-error>
+    <mat-error *ngIf="form.controls.clave.hasError('maxlength')">La clave no puede exceder 50 caracteres.</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Nombre</mat-label>
+    <input matInput formControlName="nombre" />
+    <mat-error *ngIf="form.controls.nombre.hasError('required')">El nombre es obligatorio.</mat-error>
+    <mat-error *ngIf="form.controls.nombre.hasError('maxlength')">El nombre no puede exceder 50 caracteres.</mat-error>
+  </mat-form-field>
+
+  <div class="actions">
+    <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid || isSubmitting">
+      {{ submitLabel }}
+    </button>
+
+    <button mat-button type="button" *ngIf="mode === 'edit'" (click)="onCancel()" [disabled]="isSubmitting">
+      Cancelar
+    </button>
+  </div>
+</form>

@@ -13,15 +13,19 @@ public class OpenApiConfig {
 
     @Bean
     public OpenAPI openAPI() {
-        final String securitySchemeName = "basicAuth";
+        final String securitySchemeName = "bearerAuth";
         return new OpenAPI()
-                .info(new Info().title("API Empleados").version("v1"))
+                .info(new Info()
+                        .title("API Empleados y Departamentos")
+                        .description("API de gestion de empleados, autenticacion y departamentos")
+                        .version("v1"))
                 .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
                 .components(new Components()
                         .addSecuritySchemes(securitySchemeName,
                                 new SecurityScheme()
                                         .name(securitySchemeName)
                                         .type(SecurityScheme.Type.HTTP)
-                                        .scheme("basic")));
+                                        .scheme("bearer")
+                                        .bearerFormat("UUID")));
     }
 }

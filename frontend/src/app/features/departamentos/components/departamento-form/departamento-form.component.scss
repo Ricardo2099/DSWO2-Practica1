@@ -1,0 +1,21 @@
+.departamento-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 0.85rem;
+  align-items: start;
+  padding: 1rem;
+  border-radius: var(--ui-radius-md);
+  background: var(--ui-surface);
+  border: 1px solid var(--ui-border);
+  box-shadow: var(--ui-shadow);
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.actions button {
+  font-weight: 700;
+}
