@@ -12,8 +12,12 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   let request = req;
 
   if (!hasAbsoluteUrl) {
+    const baseUrl = environment.apiBaseUrl?.trim() ?? '';
+    const normalizedBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+    const normalizedPath = req.url.startsWith('/') ? req.url : `/${req.url}`;
+
     request = request.clone({
-      url: `${environment.apiBaseUrl}${req.url}`
+      url: `${normalizedBaseUrl}${normalizedPath}`
     });
   }
 

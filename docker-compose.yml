@@ -6,8 +6,6 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-empleados_db}
       POSTGRES_USER: ${POSTGRES_USER:-empleados_user}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-empleados_pass}
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -15,6 +13,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - internal-net
 
   api:
     build:
@@ -31,8 +31,16 @@ services:
       APP_AUTH_SESSION_TIMEOUT_MINUTES: ${APP_AUTH_SESSION_TIMEOUT_MINUTES:-30}
       APP_AUTH_MAX_FAILED_ATTEMPTS: ${APP_AUTH_MAX_FAILED_ATTEMPTS:-10}
       APP_AUTH_LOCK_DURATION_MINUTES: ${APP_AUTH_LOCK_DURATION_MINUTES:-15}
-    ports:
-      - "8080:8080"
+    expose:
+      - "8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/actuator/health > /dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 25s
+    networks:
+      - internal-net
 
   frontend:
     build:
@@ -40,9 +48,43 @@ services:
       dockerfile: Dockerfile
     container_name: empleados-frontend
     depends_on:
-      - api
+      api:
+        condition: service_healthy
+    expose:
+      - "80"
+    healthcheck:
+      test: ["CMD-SHELL", "nginx -t || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    networks:
+      - internal-net
+
+  reverse-proxy:
+    image: nginx:1.27-alpine
+    container_name: empleados-reverse-proxy
+    depends_on:
+      api:
+        condition: service_healthy
+      frontend:
+        condition: service_healthy
     ports:
-      - "4200:80"
+      - "80:80"
+    volumes:
+      - ./reverse-proxy/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    healthcheck:
+      test: ["CMD-SHELL", "nginx -t || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    networks:
+      - internal-net
 
 volumes:
   postgres_data:
+
+networks:
+  internal-net:
+    driver: bridge

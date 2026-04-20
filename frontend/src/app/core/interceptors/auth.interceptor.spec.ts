@@ -36,7 +36,7 @@ describe('authInterceptor', () => {
 
     http.get('/api/v1/empleados').subscribe();
 
-    const req = httpMock.expectOne('http://localhost:8080/api/v1/empleados');
+    const req = httpMock.expectOne('/api/v1/empleados');
     expect(req.request.headers.get('Authorization')).toBe('Bearer abc123');
     req.flush({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 10 });
   });
@@ -44,7 +44,7 @@ describe('authInterceptor', () => {
   it('no debe adjuntar Authorization cuando no hay token', () => {
     http.get('/api/v1/departamentos').subscribe();
 
-    const req = httpMock.expectOne('http://localhost:8080/api/v1/departamentos');
+    const req = httpMock.expectOne('/api/v1/departamentos');
     expect(req.request.headers.has('Authorization')).toBe(false);
     req.flush([]);
   });
@@ -62,7 +62,7 @@ describe('authInterceptor', () => {
       }
     });
 
-    const req = httpMock.expectOne('http://localhost:8080/api/v1/empleados');
+    const req = httpMock.expectOne('/api/v1/empleados');
     req.flush({}, { status: 401, statusText: 'Unauthorized' });
 
     expect(localStorage.getItem('token')).toBeNull();
@@ -82,7 +82,7 @@ describe('authInterceptor', () => {
       }
     });
 
-    const req = httpMock.expectOne('http://localhost:8080/api/v1/empleados/EMP-1');
+    const req = httpMock.expectOne('/api/v1/empleados/EMP-1');
     req.flush({}, { status: 403, statusText: 'Forbidden' });
 
     expect(localStorage.getItem('token')).toBe('abc123');
