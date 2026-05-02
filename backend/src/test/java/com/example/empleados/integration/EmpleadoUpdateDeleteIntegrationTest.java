@@ -32,7 +32,11 @@ class EmpleadoUpdateDeleteIntegrationTest extends IntegrationTestBase {
 
     @BeforeEach
     void setup() {
-        empleadoRepository.deleteAll();
+        empleadoRepository.deleteAll(
+            empleadoRepository.findAll().stream()
+                .filter(e -> !"EMP-ADMIN".equals(e.getClave()))
+                .toList()
+        );
         departamentoRepository.deleteAll();
 
         Departamento departamento = new Departamento();
