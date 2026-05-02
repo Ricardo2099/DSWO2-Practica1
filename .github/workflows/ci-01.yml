@@ -24,9 +24,7 @@ jobs:
 
       - name: Run backend tests
         working-directory: backend
-        run: |
-          chmod +x mvnw
-          ./mvnw -B test
+        run: mvn clean install
 
   test-frontend:
     runs-on: ubuntu-latest
@@ -50,4 +48,4 @@ jobs:
         run: npm ci
 
       - name: Run frontend tests
-        run: npm run test -- --watch=false --browsers=ChromeHeadless --no-progress
+        run: npm run test -- --run
