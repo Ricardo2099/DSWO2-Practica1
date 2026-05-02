@@ -7,9 +7,27 @@ on:
     branches: [master, develop]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   test-backend:
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: empleados_db
+          POSTGRES_USER: empleados_user
+          POSTGRES_PASSWORD: empleados_pass
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U empleados_user -d empleados_db"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - name: Checkout
@@ -24,7 +42,11 @@ jobs:
 
       - name: Run backend tests
         working-directory: backend
-        run: mvn clean install
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/empleados_db
+          SPRING_DATASOURCE_USERNAME: empleados_user
+          SPRING_DATASOURCE_PASSWORD: empleados_pass
+        run: mvn --batch-mode --no-transfer-progress test
 
   test-frontend:
     runs-on: ubuntu-latest
@@ -48,4 +70,4 @@ jobs:
         run: npm ci
 
       - name: Run frontend tests
-        run: npm run test -- --run
+        run: npm run test -- --watch=false --no-progress
