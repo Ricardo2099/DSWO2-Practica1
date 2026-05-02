@@ -40,10 +40,23 @@ jobs:
           java-version: '17'
           cache: maven
 
+      - name: Wait for Postgres
+        run: |
+          for i in {1..30}; do
+            if (echo > /dev/tcp/127.0.0.1/5432) >/dev/null 2>&1; then
+              echo "Postgres is reachable"
+              exit 0
+            fi
+            echo "Waiting for Postgres ($i/30)..."
+            sleep 2
+          done
+          echo "Postgres did not become reachable in time" >&2
+          exit 1
+
       - name: Run backend tests
         working-directory: backend
         env:
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/empleados_db
+          SPRING_DATASOURCE_URL: jdbc:postgresql://127.0.0.1:5432/empleados_db
           SPRING_DATASOURCE_USERNAME: empleados_user
           SPRING_DATASOURCE_PASSWORD: empleados_pass
         run: mvn --batch-mode --no-transfer-progress test
