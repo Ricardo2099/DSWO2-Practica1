@@ -17,6 +17,14 @@ abstract class IntegrationTestBase {
 
     @DynamicPropertySource
     static void configure(DynamicPropertyRegistry registry) {
+        String externalUrl = System.getenv("SPRING_DATASOURCE_URL");
+        if (externalUrl != null && !externalUrl.isBlank()) {
+            return;
+        }
+
+        if (!postgres.isRunning()) {
+            postgres.start();
+        }
         registry.add("spring.datasource.url", postgres::getJdbcUrl);
         registry.add("spring.datasource.username", postgres::getUsername);
         registry.add("spring.datasource.password", postgres::getPassword);
