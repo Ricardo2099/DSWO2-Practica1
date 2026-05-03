@@ -22,7 +22,7 @@ jobs:
           POSTGRES_USER: empleados_user
           POSTGRES_PASSWORD: empleados_pass
         ports:
-          - 5432:5432
+          - 5432/tcp
         options: >-
           --health-cmd "pg_isready -U empleados_user -d empleados_db"
           --health-interval 10s
@@ -41,13 +41,16 @@ jobs:
           cache: maven
 
       - name: Wait for Postgres
+        env:
+          PGPORT: ${{ job.services.postgres.ports[5432] }}
         run: |
-          for i in {1..30}; do
-            if (echo > /dev/tcp/127.0.0.1/5432) >/dev/null 2>&1; then
+          echo "Postgres port: $PGPORT"
+          for i in {1..60}; do
+            if (echo > /dev/tcp/127.0.0.1/$PGPORT) >/dev/null 2>&1; then
               echo "Postgres is reachable"
               exit 0
             fi
-            echo "Waiting for Postgres ($i/30)..."
+            echo "Waiting for Postgres ($i/60)..."
             sleep 2
           done
           echo "Postgres did not become reachable in time" >&2
@@ -56,7 +59,7 @@ jobs:
       - name: Run backend tests
         working-directory: backend
         env:
-          SPRING_DATASOURCE_URL: jdbc:postgresql://127.0.0.1:5432/empleados_db
+          SPRING_DATASOURCE_URL: jdbc:postgresql://127.0.0.1:${{ job.services.postgres.ports[5432] }}/empleados_db
           SPRING_DATASOURCE_USERNAME: empleados_user
           SPRING_DATASOURCE_PASSWORD: empleados_pass
         run: mvn --batch-mode --no-transfer-progress test
