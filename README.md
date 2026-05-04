@@ -35,3 +35,5 @@ El compose base no expone el puerto de `db`. Para debug local se puede habilitar
 ```powershell
 docker compose -f docker-compose.yml -f docker-compose.debug-db.yml up -d
 ```
+
+<!-- CI trigger: cambio sin impacto -->
