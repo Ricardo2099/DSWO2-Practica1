@@ -37,3 +37,4 @@ docker compose -f docker-compose.yml -f docker-compose.debug-db.yml up -d
 ```
 
 <!-- CI trigger: cambio sin impacto -->
+<!-- CI trigger: cambio sin impacto (2) -->
