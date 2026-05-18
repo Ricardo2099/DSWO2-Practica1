@@ -1,0 +1,94 @@
+name: 03 Cypress
+
+on:
+  workflow_run:
+    workflows: ["02 Sonar"]
+    branches: [master, develop]
+    types: [completed]
+
+permissions:
+  contents: read
+
+jobs:
+  cypress:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: empleados_db
+          POSTGRES_USER: empleados_user
+          POSTGRES_PASSWORD: empleados_pass
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd "pg_isready -U empleados_user -d empleados_db"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      SPRING_PROFILES_ACTIVE: test
+      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5433/empleados_db
+      SPRING_DATASOURCE_USERNAME: empleados_user
+      SPRING_DATASOURCE_PASSWORD: empleados_pass
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Start backend
+        working-directory: backend
+        run: |
+          nohup mvn -B --no-transfer-progress spring-boot:run > /tmp/backend.log 2>&1 &
+
+      - name: Start frontend
+        working-directory: frontend
+        run: |
+          nohup npm start > /tmp/frontend.log 2>&1 &
+
+      - name: Wait for services
+        run: |
+          for i in {1..120}; do
+            if bash -c '</dev/tcp/localhost/8080' 2>/dev/null && bash -c '</dev/tcp/localhost/4200' 2>/dev/null; then
+              echo "Backend y frontend listos"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Servicios no disponibles a tiempo"
+          echo "--- Backend log ---"
+          tail -n 200 /tmp/backend.log || true
+          echo "--- Frontend log ---"
+          tail -n 200 /tmp/frontend.log || true
+          exit 1
+
+      - name: Run Cypress login spec
+        working-directory: frontend
+        env:
+          CI: true
+        run: |
+          npx cypress run --browser electron --headless --config baseUrl=http://localhost:4200 --spec "cypress/e2e/auth/login.cy.ts"

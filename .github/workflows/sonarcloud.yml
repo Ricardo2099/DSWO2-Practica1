@@ -1,0 +1,57 @@
+name: 02 Sonar
+
+on:
+  workflow_run:
+    workflows: ["01 CI"]
+    branches: [master, develop]
+    types: [completed]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  sonarcloud:
+    name: SonarCloud Scan
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar el código (Checkout)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Validar variables de SonarCloud
+        run: |
+          if [ -z "${{ vars.SONAR_PROJECT_KEY }}" ] || [ -z "${{ vars.SONAR_ORGANIZATION }}" ]; then
+            echo "Faltan GitHub Variables requeridas: SONAR_PROJECT_KEY y/o SONAR_ORGANIZATION" >&2
+            echo "Configúralas en Settings -> Secrets and variables -> Actions -> Variables" >&2
+            exit 1
+          fi
+
+      - name: Configurar Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Compilar backend para generar binarios Java
+        working-directory: backend
+        run: mvn --batch-mode --no-transfer-progress -DskipTests compile
+
+      - name: Ejecutar SonarCloud Scanner
+        uses: SonarSource/sonarcloud-github-action@v2.3.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }}
+            -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY }}
+            -Dsonar.sources=backend/src/main/java,backend/src/main/resources,frontend/src
+            -Dsonar.tests=backend/src/test/java
+            -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/coverage/**,backend/target/**
+            -Dsonar.java.binaries=backend/target/classes

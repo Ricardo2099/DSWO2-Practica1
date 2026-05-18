@@ -29,9 +29,12 @@ El proxy preserva headers:
 y mantiene `Authorization: Bearer <token>` sin modificaciones.
 
 ## Debug local de base de datos (opcional)
-
+#
 El compose base no expone el puerto de `db`. Para debug local se puede habilitar override:
 
 ```powershell
 docker compose -f docker-compose.yml -f docker-compose.debug-db.yml up -d
 ```
+
+<!-- CI trigger: cambio sin impacto -->
+<!-- CI trigger: cambio sin impacto (2) -->

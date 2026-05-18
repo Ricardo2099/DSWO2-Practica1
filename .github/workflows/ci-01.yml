@@ -1,4 +1,4 @@
-name: CI 01
+name: 01 CI
 
 on:
   push:
@@ -11,67 +11,68 @@ permissions:
   contents: read
 
 jobs:
- test-backend:
-  runs-on: ubuntu-latest
+  test-backend:
+    runs-on: ubuntu-latest
 
-  services:
-   postgres:
-    image: postgres:15
-    env:
-      POSTGRES_DB: empleados_db
-      POSTGRES_USER: empleados_user
-      POSTGRES_PASSWORD: empleados_pass
-    ports:
-      - 5432/tcp
-    options: >-
-      --health-cmd "pg_isready -U empleados_user -d empleados_db"
-      --health-interval 10s
-      --health-timeout 5s
-      --health-retries 5
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: empleados_db
+          POSTGRES_USER: empleados_user
+          POSTGRES_PASSWORD: empleados_pass
+        ports:
+          - 5432/tcp
+        options: >-
+          --health-cmd "pg_isready -U empleados_user -d empleados_db"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
-  steps:
-  - name: Checkout
-    uses: actions/checkout@v4
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-  - name: Set up Java 17
-    uses: actions/setup-java@v4
-    with:
-      distribution: temurin
-      java-version: '17'
-      cache: maven
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
 
-  - name: Wait for Postgres
-    env:
-      PGPORT: ${{ job.services.postgres.ports[5432] }}
-    run: |
-      echo "Postgres port: $PGPORT"
-      for i in {1..60}; do
-        if (echo > /dev/tcp/127.0.0.1/$PGPORT) >/dev/null 2>&1; then
-          echo "Postgres is reachable"
-          exit 0
-        fi
-        echo "Waiting for Postgres ($i/60)..."
-        sleep 2
-      done
-      echo "Postgres did not become reachable in time" >&2
-      exit 1
+      - name: Wait for Postgres
+        env:
+          PGPORT: ${{ job.services.postgres.ports[5432] }}
+        run: |
+          echo "Postgres port: $PGPORT"
+          for i in {1..60}; do
+            if (echo > /dev/tcp/127.0.0.1/$PGPORT) >/dev/null 2>&1; then
+              echo "Postgres is reachable"
+              exit 0
+            fi
+            echo "Waiting for Postgres ($i/60)..."
+            sleep 2
+          done
+          echo "Postgres did not become reachable in time" >&2
+          exit 1
 
-  - name: Run backend tests
-    working-directory: backend
-    env:
-      SPRING_PROFILES_ACTIVE: test
-      SPRING_DATASOURCE_URL: jdbc:postgresql://127.0.0.1:${{ job.services.postgres.ports[5432] }}/empleados_db
-      SPRING_DATASOURCE_USERNAME: empleados_user
-      SPRING_DATASOURCE_PASSWORD: empleados_pass
-    run: mvn --batch-mode --no-transfer-progress test
+      - name: Run backend tests
+        working-directory: backend
+        env:
+          SPRING_PROFILES_ACTIVE: test
+          SPRING_DATASOURCE_URL: jdbc:postgresql://127.0.0.1:${{ job.services.postgres.ports[5432] }}/empleados_db
+          SPRING_DATASOURCE_USERNAME: empleados_user
+          SPRING_DATASOURCE_PASSWORD: empleados_pass
+        run: mvn --batch-mode --no-transfer-progress test
 
- test-frontend:
-     runs-on: ubuntu-latest
+  test-frontend:
+    runs-on: ubuntu-latest
 
-     defaults:
+    defaults:
       run:
         working-directory: frontend
-     steps:
+
+    steps:
       - name: Checkout
         uses: actions/checkout@v4
 
