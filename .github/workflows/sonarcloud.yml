@@ -1,20 +1,19 @@
-name: Analisis de SonarCloud
+name: 02 Sonar
 
 on:
-  push:
+  workflow_run:
+    workflows: ["01 CI"]
     branches: [master, develop]
-  pull_request:
-    branches: [master, develop]
-    types: [opened, synchronize, reopened]
-  workflow_dispatch:
+    types: [completed]
 
 permissions:
   contents: read
-  pull-requests: read
+  pull-requests: write
 
 jobs:
   sonarcloud:
     name: SonarCloud Scan
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -22,6 +21,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Validar variables de SonarCloud
         run: |
